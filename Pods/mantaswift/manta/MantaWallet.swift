@@ -55,6 +55,14 @@ extension String {
 // swiftlint:disable identifier_name
 
 class MQTTDelegate: CocoaMQTTDelegate {
+    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopics topics: [String]) {
+        
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopics topics: [String]) {
+        
+    }
+    
     weak var manta: MantaWallet?
     
     init (_ manta: MantaWallet) {
@@ -74,9 +82,9 @@ class MQTTDelegate: CocoaMQTTDelegate {
     public func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {
         manta?.log.debug("Got publish ack")
         
-        guard let promise = manta?.pubACKPromises[id] else {return}
+        guard let promise = manta?.pubACKPromises[Int(id)] else {return}
         
-        manta?.pubACKPromises[id] = nil
+        manta?.pubACKPromises[Int(id)] = nil
         promise.fulfill(())
     }
     
@@ -160,7 +168,7 @@ public class MantaWallet {
     // swiftlint:enable weak_delegate
     
     var connectPromise: Promise<Void>?
-    var pubACKPromises: [UInt16: Promise<Void>] = [:]
+    var pubACKPromises: [Int: Promise<Void>] = [:]
     var getPaymentPromise: Promise<PaymentRequestEnvelope>?
     
     let log: LoggerServiceType.Type

@@ -46,6 +46,8 @@ final class SendViewController: ModalDetailViewController {
         contentStackView.addArrangedElement(.separator)
 
         addAmountInputView()
+        
+        addMantaInfo()
 
         if let memo = viewModel.memo, !memo.isEmpty {
             contentStackView.addArrangedElement(.verticalStackView(content: [
@@ -87,6 +89,22 @@ final class SendViewController: ModalDetailViewController {
                 self?.amountInputView?.subtitleTextColor = $0
             }
             .dispose(in: reactive.bag)
+    }
+    
+    private func addMantaInfo() {
+        guard let mantaRequest = viewModel.mantaRequest else {
+            return
+        }
+        
+        contentStackView.addArrangedElement(.horizontalStackView(compressionResistant: .first, content: [
+            .label(text: "Merchant", style: Style.Label.headline),
+            .label(text: mantaRequest.merchant.name, style: Style.Label.body)
+        ]))
+        
+        contentStackView.addArrangedElement(.horizontalStackView(compressionResistant: .first, content: [
+            .label(text: "Address", style: Style.Label.headline),
+            .label(text: mantaRequest.merchant.address ?? "", style: Style.Label.body)
+        ]))
     }
 
     private func addAmountInputView() {

@@ -97,7 +97,7 @@ extension Signal {
     /// - Parameter element: An element to emit in the `next` event.
     /// - Parameter interval: A number of seconds to delay the emission.
     /// - Parameter queue: A queue used to delay the emission. Defaults to a new serial queue.
-    public init(just element: Element, after interval: Double, queue: DispatchQueue = DispatchQueue(label: "reactive_kit.just_after")) {
+    public init(just element: Element, after interval: Double, queue: DispatchQueue = DispatchQueue(label: "com.reactive_kit.signal.just_after")) {
         self = Signal(just: element).delay(interval: interval, on: queue)
     }
 
@@ -161,14 +161,14 @@ extension Signal {
     /// - Parameter sequence: A sequence of elements to convert into a series of `next` events.
     /// - Parameter interval: A number of seconds to wait between each emission.
     /// - Parameter queue: A queue used to delay the emissions. Defaults to a new serial queue.
-    public init<S: Sequence>(sequence: S, interval: Double, queue: DispatchQueue = DispatchQueue(label: "reactive_kit.sequence_interval"))
+    public init<S: Sequence>(sequence: S, interval: Double, queue: DispatchQueue = DispatchQueue(label: "com.reactive_kit.signal.sequence"))
         where S.Iterator.Element == Element {
         self.init { observer in
             var iterator = sequence.makeIterator()
-            var dispatch: (() -> Void)!
+            var dispatch: (() -> Void)?
             let disposable = SimpleDisposable()
             dispatch = {
-                queue.after(when: interval) {
+                queue.asyncAfter(deadline: .now() + interval) {
                     guard !disposable.isDisposed else {
                         dispatch = nil
                         return
@@ -179,10 +179,10 @@ extension Signal {
                         return
                     }
                     observer.receive(element)
-                    dispatch()
+                    dispatch?()
                 }
             }
-            dispatch()
+            dispatch?()
             return disposable
         }
     }

@@ -25,10 +25,10 @@
 import Foundation
 
 /// Represents a type that receives events.
-public typealias Observer<Element, Error: Swift.Error> = (Event<Element, Error>) -> Void
+public typealias Observer<Element, Error: Swift.Error> = (Signal<Element, Error>.Event) -> Void
 
 /// An observer of safe signals.
-public typealias SafeObserver<Element> = (Event<Element, Never>) -> Void
+public typealias SafeObserver<Element> = (Signal<Element, Never>.Event) -> Void
 
 /// Represents a type that receives events.
 public protocol ObserverProtocol {
@@ -40,14 +40,14 @@ public protocol ObserverProtocol {
     associatedtype Error: Swift.Error
     
     /// Send the event to the observer.
-    func on(_ event: Event<Element, Error>)
+    func on(_ event: Signal<Element, Error>.Event)
 }
 
 /// Represents a type that receives events. Observer is just a convenience
 /// wrapper around a closure observer `Observer<Element, Error>`.
 public struct AnyObserver<Element, Error: Swift.Error>: ObserverProtocol {
     
-    private let observer: Observer<Element, Error>
+    public let observer: Observer<Element, Error>
     
     /// Creates an observer that wraps a closure observer.
     public init(observer: @escaping Observer<Element, Error>) {
@@ -55,7 +55,8 @@ public struct AnyObserver<Element, Error: Swift.Error>: ObserverProtocol {
     }
     
     /// Calles wrapped closure with the given element.
-    public func on(_ event: Event<Element, Error>) {
+    @inlinable
+    public func on(_ event: Signal<Element, Error>.Event) {
         observer(event)
     }
 }
@@ -64,25 +65,31 @@ public struct AnyObserver<Element, Error: Swift.Error>: ObserverProtocol {
 public final class AtomicObserver<Element, Error: Swift.Error>: ObserverProtocol {
     
     private var observer: Observer<Element, Error>?
-    private let lock = NSRecursiveLock(name: "reactive_kit.atomic_observer")
+    private let lock = NSRecursiveLock(name: "com.reactive_kit.atomic_observer")
     private let parentDisposable: Disposable
     
-    public private(set) var disposable: Disposable!
+    private var _disposable: Disposable?
+    public var disposable: Disposable {
+        lock.lock(); defer { lock.unlock() }
+        return _disposable!
+    }
     
     /// Creates an observer that wraps given closure.
     public init(disposable: Disposable, observer: @escaping Observer<Element, Error>) {
         self.observer = observer
         self.parentDisposable = disposable
-        self.disposable = BlockDisposable { [weak self] in
+
+        lock.lock(); defer { lock.unlock() }
+        _disposable = BlockDisposable { [weak self] in
             self?.observer = nil
             disposable.dispose()
         }
     }
     
     /// Calles wrapped closure with the given element.
-    public func on(_ event: Event<Element, Error>) {
+    public func on(_ event: Signal<Element, Error>.Event) {
         lock.lock(); defer { lock.unlock() }
-        guard !disposable.isDisposed else { return }
+        guard let disposable = _disposable, !disposable.isDisposed else { return }
         if let observer = observer {
             observer(event)
             if event.isTerminal {

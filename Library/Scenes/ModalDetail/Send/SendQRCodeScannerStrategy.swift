@@ -15,6 +15,7 @@ class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
     private let lightningService: LightningService
     private let authenticationViewModel: AuthenticationViewModel
     private var mantaWallet: MantaWallet?
+    private var mantaRequest: PaymentRequestMessage?
 
     let title = L10n.Scene.Send.title
     let pasteButtonTitle = L10n.Scene.Send.PasteButton.title
@@ -32,7 +33,8 @@ class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
             case .success(let invoice):
                 let viewModel = SendViewModel(
                     invoice: invoice,
-                    lightningService: self.lightningService
+                    lightningService: self.lightningService,
+                    mantaRequest: self.mantaRequest
                 )
                 completion(.success(SendViewController(viewModel: viewModel, authenticationViewModel: self.authenticationViewModel)))
             case .failure(let error):
@@ -52,12 +54,14 @@ class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
         mantaWallet = MantaWallet(address)
         
         if mantaWallet != nil {
-            mantaWallet?.getPaymentRequest(cryptoCurrency: "BTC-LN-TESTNET").then { envelope in
-                let request = try? envelope.unpack()
+            mantaWallet?.getPaymentRequest(cryptoCurrency: "BTC-LN-TESTNET").timeout(2).then { envelope in
+                self.mantaRequest = try? envelope.unpack()
                 
-                let mantaDestinationAddress = request?.destinations[0].destinationAddress ?? ""
+                let mantaDestinationAddress = self.mantaRequest?.destinations[0].destinationAddress ?? ""
                 
                 self.getViewControllerForAddress(address: mantaDestinationAddress, completion: completion)
+            }.catch { error in
+                completion(.failure(.init(message: error.localizedDescription)))
             }
             
         } else {

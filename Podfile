@@ -24,6 +24,7 @@ abstract_target 'RPC' do
     
     target 'Library' do
         pod 'mantaswift', :git => 'https://github.com/NanoRay/mantaswift'
+        pod 'SwiftSocket', :git => 'https://github.com/swiftsocket/SwiftSocket.git'
         pod 'KeychainAccess'
         pod 'Bond'
         

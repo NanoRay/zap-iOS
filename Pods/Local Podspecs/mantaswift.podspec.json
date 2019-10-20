@@ -1,7 +1,7 @@
 {
   "name": "mantaswift",
-  "version": "0.0.1",
-  "summary": "A short description of mantaswift.",
+  "version": "0.1",
+  "summary": "Manta protocol for Swift",
   "description": "Manta protocol for Swift",
   "homepage": "https://github.com/NanoRay/mantaswift",
   "license": "MIT",
@@ -18,10 +18,10 @@
   "source_files": "manta",
   "dependencies": {
     "CocoaMQTT": [
-      "~> 1.1.2"
+      "~> 1.3.0-alpha.1"
     ],
     "PromisesSwift": [
-      "~> 1.2.3"
+      "~> 1.2.8"
     ],
     "SwiftSocket": [
 

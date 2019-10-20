@@ -10,6 +10,7 @@ import Foundation
 import Lightning
 import SwiftBTC
 import SwiftLnd
+import mantaswift
 
 extension InvoiceError: LocalizedError {
     public var errorDescription: String? {
@@ -86,6 +87,7 @@ final class SendViewModel: NSObject {
 
     let receiver: String
     let memo: String?
+    let mantaRequest: PaymentRequestMessage?
     let isSendButtonEnabled = Observable(false)
     let isInputViewEnabled = Observable(true)
 
@@ -95,7 +97,7 @@ final class SendViewModel: NSObject {
         DispatchQueue.main.debounce(interval: 275, action: fetchFee)
     }()
 
-    init(invoice: BitcoinInvoice, lightningService: LightningService) {
+    init(invoice: BitcoinInvoice, lightningService: LightningService, mantaRequest: PaymentRequestMessage? = nil) {
         self.lightningService = lightningService
 
         if let paymentRequest = invoice.lightningPaymentRequest {
@@ -113,7 +115,8 @@ final class SendViewModel: NSObject {
             self.amount = amount
         }
         memo = invoice.lightningPaymentRequest?.memo ?? invoice.bitcoinURI?.memo
-
+        self.mantaRequest = mantaRequest
+        
         super.init()
 
         updateFee()
