@@ -1,0 +1,6 @@
+framework module mantaswift {
+  umbrella header "mantaswift-umbrella.h"
+
+  export *
+  module * { export * }
+}

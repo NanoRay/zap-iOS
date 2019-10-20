@@ -1,0 +1,30 @@
+{
+  "name": "mantaswift",
+  "version": "0.0.1",
+  "summary": "A short description of mantaswift.",
+  "description": "Manta protocol for Swift",
+  "homepage": "https://github.com/NanoRay/mantaswift",
+  "license": "MIT",
+  "authors": {
+    "Alessandro Viganò": "alvistar@gmail.com"
+  },
+  "platforms": {
+    "ios": "10.3",
+    "osx": "10.13"
+  },
+  "source": {
+    "git": "https://github.com/NanoRay/mantaswift.git"
+  },
+  "source_files": "manta",
+  "dependencies": {
+    "CocoaMQTT": [
+      "~> 1.1.2"
+    ],
+    "PromisesSwift": [
+      "~> 1.2.3"
+    ],
+    "SwiftSocket": [
+
+    ]
+  }
+}

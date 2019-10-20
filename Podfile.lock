@@ -9,6 +9,9 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.3):
     - BoringSSL-GRPC/Interface (= 0.0.3)
   - BoringSSL-GRPC/Interface (0.0.3)
+  - CocoaAsyncSocket (7.6.3)
+  - CocoaMQTT (1.1.3):
+    - CocoaAsyncSocket (~> 7.6.3)
   - Differ (1.4.3)
   - gRPC-Core (1.19.0):
     - gRPC-Core/Implementation (= 1.19.0)
@@ -19,11 +22,18 @@ PODS:
     - nanopb (~> 0.3)
   - gRPC-Core/Interface (1.19.0)
   - KeychainAccess (3.2.0)
+  - mantaswift (0.0.1):
+    - CocoaMQTT (~> 1.1.2)
+    - PromisesSwift (~> 1.2.3)
+    - SwiftSocket
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - PromisesObjC (1.2.8)
+  - PromisesSwift (1.2.8):
+    - PromisesObjC (= 1.2.8)
   - ReactiveKit (3.13.0)
   - SimulatorStatusMagic (2.4.1)
   - SwiftBTC (0.0.8):
@@ -32,10 +42,12 @@ PODS:
     - gRPC-Core (~> 1.19.0)
     - SwiftProtobuf (~> 1.5.0)
   - SwiftProtobuf (1.5.0)
+  - SwiftSocket (2.0.2)
 
 DEPENDENCIES:
   - Bond
   - KeychainAccess
+  - mantaswift (from `https://github.com/NanoRay/mantaswift`)
   - SimulatorStatusMagic
   - SwiftBTC (from `./SwiftBTC`)
   - SwiftGRPC
@@ -45,33 +57,51 @@ SPEC REPOS:
     - BigInt
     - Bond
     - BoringSSL-GRPC
+    - CocoaAsyncSocket
+    - CocoaMQTT
     - Differ
     - gRPC-Core
     - KeychainAccess
     - nanopb
+    - PromisesObjC
+    - PromisesSwift
     - ReactiveKit
     - SimulatorStatusMagic
     - SwiftGRPC
     - SwiftProtobuf
+    - SwiftSocket
 
 EXTERNAL SOURCES:
+  mantaswift:
+    :git: https://github.com/NanoRay/mantaswift
   SwiftBTC:
     :path: "./SwiftBTC"
+
+CHECKOUT OPTIONS:
+  mantaswift:
+    :commit: 881e4ad05f6fb1b87a4a55700cd2649e8c04eebb
+    :git: https://github.com/NanoRay/mantaswift
 
 SPEC CHECKSUMS:
   BigInt: 2aad1a9942dc932ec8b84290d2c564a3d76f97ab
   Bond: 5d626bfbbfc60b213ec35badb8f4fd81beff6a5f
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
+  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
+  CocoaMQTT: b506d38ad3bbe1c55a4f8ee8c9fd02c35da1a7d8
   Differ: 6c7477d6187e8c36d02ec342a3c321061b85a0ea
   gRPC-Core: bd9472c8daa2e414b9f8038ba667bf56ce0e02b8
   KeychainAccess: 3b1bf8a77eb4c6ea1ce9404c292e48f948954c6b
+  mantaswift: 7baab2db0b4f58796c37102f8777c8fe5e694eaf
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
+  PromisesSwift: 37bad6f4daddb02f7c9c531efe91e8b21c13ee2f
   ReactiveKit: 4a938b0671b0b068232926a443da19d535a03023
   SimulatorStatusMagic: 28d4a9d1a500ac7cea0b2b5a43c1c6ddb40ba56c
   SwiftBTC: ff84a5a95510e94154389b7f26f4a1418b3954e4
   SwiftGRPC: 43d3e8db88f97e7386bd44f159ecdfad02ce3362
   SwiftProtobuf: 241400280f912735c1e1b9fe675fdd2c6c4d42e2
+  SwiftSocket: 6f4c9c63fbc5c1d61188936bb3c599fd546f40ae
 
-PODFILE CHECKSUM: 3cdda6b86798b0b3eab2df77595519267afc458e
+PODFILE CHECKSUM: 04b667c69199ba3a7a952a6df2696b9c597e1795
 
-COCOAPODS: 1.7.4
+COCOAPODS: 1.7.5

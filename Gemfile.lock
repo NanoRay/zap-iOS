@@ -212,6 +212,3 @@ DEPENDENCIES
   dotenv
   fastlane
   fastlane-plugin-appicon
-
-BUNDLED WITH
-   1.16.1

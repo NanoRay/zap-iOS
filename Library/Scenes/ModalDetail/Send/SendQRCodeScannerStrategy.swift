@@ -9,10 +9,12 @@ import Foundation
 import Lightning
 import SwiftBTC
 import SwiftLnd
+import mantaswift
 
 class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
     private let lightningService: LightningService
     private let authenticationViewModel: AuthenticationViewModel
+    private var mantaWallet: MantaWallet?
 
     let title = L10n.Scene.Send.title
     let pasteButtonTitle = L10n.Scene.Send.PasteButton.title
@@ -22,7 +24,7 @@ class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
         self.authenticationViewModel = authenticationViewModel
     }
 
-    func viewControllerForAddress(address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
+    func getViewControllerForAddress(address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
         BitcoinInvoiceFactory.create(from: address, lightningService: lightningService) { [weak self] result in
             guard let self = self else { return }
 
@@ -43,6 +45,23 @@ class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
                     completion(.failure(.init(message: L10n.Scene.QrcodeScanner.Error.zeroAmountInvoice)))
                 }
             }
+        }
+    }
+    
+    func viewControllerForAddress(address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
+        mantaWallet = MantaWallet(address)
+        
+        if mantaWallet != nil {
+            mantaWallet?.getPaymentRequest(cryptoCurrency: "BTC-LN-TESTNET").then { envelope in
+                let request = try? envelope.unpack()
+                
+                let mantaDestinationAddress = request?.destinations[0].destinationAddress ?? ""
+                
+                self.getViewControllerForAddress(address: mantaDestinationAddress, completion: completion)
+            }
+            
+        } else {
+            getViewControllerForAddress(address: address, completion: completion)
         }
     }
 }

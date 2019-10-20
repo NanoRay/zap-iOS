@@ -1,4 +1,4 @@
-platform :ios, '10.0'
+platform :ios, '10.3'
 use_frameworks!
 inhibit_all_warnings!
 
@@ -23,6 +23,7 @@ abstract_target 'RPC' do
     end
     
     target 'Library' do
+        pod 'mantaswift', :git => 'https://github.com/NanoRay/mantaswift'
         pod 'KeychainAccess'
         pod 'Bond'
         
