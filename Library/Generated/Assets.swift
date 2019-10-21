@@ -26,6 +26,7 @@ internal enum Asset {
   internal static let iconCopy = ImageAsset(name: "icon_copy")
   internal static let iconQrCode = ImageAsset(name: "icon_qr_code")
   internal static let lightningBoltBackground = ImageAsset(name: "lightning_bolt_background")
+  internal static let loadingAppia = ImageAsset(name: "loading_appia")
   internal static let loadingCheck = ImageAsset(name: "loading_check")
   internal static let loadingLightning = ImageAsset(name: "loading_lightning")
   internal static let loadingOnChain = ImageAsset(name: "loading_on_chain")

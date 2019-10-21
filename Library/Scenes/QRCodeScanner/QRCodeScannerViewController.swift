@@ -100,7 +100,7 @@ class QRCodeScannerViewController: UIViewController {
         })
         
         let loadingImage: ImageAsset
-        loadingImage = Asset.loadingLightning
+        loadingImage = Asset.loadingAppia
         
         let size = CGSize(width: 50, height: 50)
         let loadingView = LoadingAnimationView(frame: CGRect(origin: .zero, size: size), loadingImage: loadingImage)
