@@ -99,6 +99,7 @@ final class SendViewController: ModalDetailViewController {
         let image = Asset.appiaLogo
         
         let imageView = UIImageView(image: image.image)
+        imageView.contentMode = .scaleAspectFit
         
         contentStackView.addArrangedElement(.customView(imageView))
         
