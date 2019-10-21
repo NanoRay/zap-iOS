@@ -1,5 +1,5 @@
 // swiftlint:disable all
-// Generated using SwiftGen, by O.Halligon — https://github.com/SwiftGen/SwiftGen
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
 
 #if os(OSX)
   import AppKit.NSImage
@@ -18,6 +18,7 @@
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
+  internal static let appiaLogo = ImageAsset(name: "appia_logo")
   internal static let channelBackupFile = ImageAsset(name: "channel_backup_file")
   internal static let channelBackupFileError = ImageAsset(name: "channel_backup_file_error")
   internal static let iconErrorSmall = ImageAsset(name: "icon_error_small")

@@ -96,6 +96,12 @@ final class SendViewController: ModalDetailViewController {
             return
         }
         
+        let image = Asset.appiaLogo
+        
+        let imageView = UIImageView(image: image.image)
+        
+        contentStackView.addArrangedElement(.customView(imageView))
+        
         contentStackView.addArrangedElement(.horizontalStackView(compressionResistant: .first, content: [
             .label(text: "Merchant", style: Style.Label.headline),
             .label(text: mantaRequest.merchant.name, style: Style.Label.body)

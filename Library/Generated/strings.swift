@@ -1,5 +1,5 @@
 // swiftlint:disable all
-// Generated using SwiftGen, by O.Halligon — https://github.com/SwiftGen/SwiftGen
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
 
 import Foundation
 
@@ -42,6 +42,27 @@ internal enum L10n {
         return L10n.tr("Localizable", "error.block_explorer.unsupported_network", p1, p2)
       }
     }
+  }
+
+  internal enum ExpiryTime {
+    /// 1 Day
+    internal static let oneDay = L10n.tr("Localizable", "expiry_time.one_day")
+    /// 1 Hour
+    internal static let oneHour = L10n.tr("Localizable", "expiry_time.one_hour")
+    /// 1 Minute
+    internal static let oneMinute = L10n.tr("Localizable", "expiry_time.one_minute")
+    /// 1 Week
+    internal static let oneWeek = L10n.tr("Localizable", "expiry_time.one_week")
+    /// 1 Year
+    internal static let oneYear = L10n.tr("Localizable", "expiry_time.one_year")
+    /// 6 Hours
+    internal static let sixHours = L10n.tr("Localizable", "expiry_time.six_hours")
+    /// 10 Minutes
+    internal static let tenMinutes = L10n.tr("Localizable", "expiry_time.ten_minutes")
+    /// 30 Days
+    internal static let thirtyDays = L10n.tr("Localizable", "expiry_time.thirty_days")
+    /// 30 Minutes
+    internal static let thirtyMinutes = L10n.tr("Localizable", "expiry_time.thirty_minutes")
   }
 
   internal enum Generic {
@@ -781,28 +802,6 @@ internal enum L10n {
       internal static let placeholder = L10n.tr("Localizable", "view.amount_input.placeholder")
     }
   }
-  
-  internal enum ExpiryTime {
-    /// 1 Minute
-    internal static let oneMinute = L10n.tr("Localizable", "expiry_time.one_minute")
-    /// 10 Minutes
-    internal static let tenMinutes = L10n.tr("Localizable", "expiry_time.ten_minutes")
-    /// 30 Minutes
-    internal static let thirtyMinutes = L10n.tr("Localizable", "expiry_time.thirty_minutes")
-    /// 1 Hour
-    internal static let oneHour = L10n.tr("Localizable", "expiry_time.one_hour")
-    /// 6 Hours
-    internal static let sixHours = L10n.tr("Localizable", "expiry_time.six_hours")
-    /// 1 Day
-    internal static let oneDay = L10n.tr("Localizable", "expiry_time.one_day")
-    /// 1 Week
-    internal static let oneWeek = L10n.tr("Localizable", "expiry_time.one_week")
-    /// 30 days
-    internal static let thirtyDays = L10n.tr("Localizable", "expiry_time.thirty_days")
-    /// 1 Year
-    internal static let oneYear = L10n.tr("Localizable", "expiry_time.one_year")
-  }
-    
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name
@@ -811,6 +810,7 @@ internal enum L10n {
 
 extension L10n {
   private static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
+    // swiftlint:disable:next nslocalizedstring_key
     let format = NSLocalizedString(key, tableName: table, bundle: Bundle(for: BundleToken.self), comment: "")
     return String(format: format, locale: Locale.current, arguments: args)
   }
