@@ -154,7 +154,7 @@ class QRCodeScannerViewController: UIViewController {
     
     func tryPresentingViewController(for address: String, mantaRequest: PaymentRequestMessage? = nil) {
         
-        strategy.viewControllerForAddress(address: address, mantaRequest: mantaRequest) { [weak self] result in
+        strategy.viewControllerForAddress(address: address, extra: mantaRequest) { [weak self] result in
             DispatchQueue.main.async {
                 self?.pasteButton.isEnabled = true
                 switch result {

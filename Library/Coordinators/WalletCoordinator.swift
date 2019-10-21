@@ -241,7 +241,7 @@ final class WalletCoordinator: NSObject, Coordinator {
             DispatchQueue(label: "presentSend").async {
                 let group = DispatchGroup()
                 group.enter()
-                strategy.viewControllerForAddress(address: invoice) { [weak self] result in
+                strategy.viewControllerForAddress(address: invoice, extra: nil) { [weak self] result in
                     group.leave()
                     guard let viewController = try? result.get() else { return }
                     self?.rootViewController.present(viewController, animated: true)

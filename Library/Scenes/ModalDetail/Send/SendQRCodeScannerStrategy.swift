@@ -25,11 +25,12 @@ class SendQRCodeScannerStrategy: QRCodeScannerStrategy {
     }
 
     func viewControllerForAddress(address: String,
-                                  mantaRequest: PaymentRequestMessage? = nil,
+                                  extra: Any?,
                                   completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
         BitcoinInvoiceFactory.create(from: address, lightningService: lightningService) { [weak self] result in
             guard let self = self else { return }
-
+            guard let mantaRequest = extra as? PaymentRequestMessage? else {return}
+            
             switch result {
             case .success(let invoice):
                 let viewModel = SendViewModel(

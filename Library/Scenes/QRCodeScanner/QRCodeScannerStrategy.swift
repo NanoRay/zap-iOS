@@ -20,14 +20,7 @@ protocol QRCodeScannerStrategy {
     var pasteButtonTitle: String { get }
 
     func viewControllerForAddress(address: String,
-                                  mantaRequest: PaymentRequestMessage?,
+                                  extra: Any?,
                                   completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void)
-}
-
-extension QRCodeScannerStrategy {
-    func viewControllerForAddress(address: String,
-                                  mantaRequest: PaymentRequestMessage? = nil,
-                                  completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
-        return viewControllerForAddress(address: address, mantaRequest: mantaRequest, completion: completion)
-    }
+    
 }

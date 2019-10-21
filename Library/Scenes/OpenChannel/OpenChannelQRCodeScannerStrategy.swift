@@ -20,7 +20,7 @@ struct OpenChannelQRCodeScannerStrategy: QRCodeScannerStrategy {
         self.lightningService = lightningService
     }
 
-    func viewControllerForAddress(address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
+    func viewControllerForAddress(address: String, extra: Any?, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
         if let nodeURI = LightningNodeURI(string: address) {
             let openChannelViewModel = OpenChannelViewModel(lightningService: lightningService, lightningNodeURI: nodeURI)
             completion(.success(OpenChannelViewController(viewModel: openChannelViewModel)))
