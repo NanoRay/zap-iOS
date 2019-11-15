@@ -11,39 +11,7 @@ import SafariServices
 import SwiftBTC
 import UIKit
 
-enum Tab {
-    case wallet
-    case history
-    case channels
-    case settings
-
-    var title: String {
-        switch self {
-        case .wallet:
-            return L10n.Scene.Wallet.title
-        case .history:
-            return L10n.Scene.History.title
-        case .channels:
-            return L10n.Scene.Channels.title
-        case .settings:
-            return L10n.Scene.Settings.title
-        }
-    }
-
-    var image: UIImage {
-        switch self {
-        case .wallet:
-            return Asset.tabbarWallet.image
-        case .history:
-            return Asset.tabbarHistory.image
-        case .channels:
-            return Asset.tabbarChannels.image
-        case .settings:
-            return Asset.tabbarSettings.image
-        }
-    }
-}
-
+// swiftlint:disable type_body_length file_length
 final class WalletCoordinator: NSObject, Coordinator {
     let rootViewController: RootViewController
 
@@ -54,11 +22,14 @@ final class WalletCoordinator: NSObject, Coordinator {
     private let walletConfigurationStore: WalletConfigurationStore
 
     private weak var detailViewController: UINavigationController?
+    private weak var channelListViewController: UIViewController?
     private weak var disconnectWalletDelegate: WalletDelegate?
 
     private var notificationScheduler: NotificationScheduler?
     private var currentState: InfoService.WalletState
 
+    private var pageViewController: WalletPageViewController?
+    
     var route: Route?
 
     init(rootViewController: RootViewController, lightningService: LightningService, disconnectWalletDelegate: WalletDelegate, authenticationViewModel: AuthenticationViewModel, walletConfigurationStore: WalletConfigurationStore) {
@@ -154,19 +125,12 @@ final class WalletCoordinator: NSObject, Coordinator {
     }
 
     private func presentMain() {
-        let tabBarController = RootTabBarController(presentWalletList: presentWalletList)
-        let settingsViewController = self.settingsViewController()
+        guard rootViewController.currentViewController != pageViewController else { return }
 
-        tabBarController.tabs = [
-            (.wallet, walletViewController()),
-            (.history, historyViewController()),
-            (.channels, channelNavigationController(badgeUpdaterDelegate: tabBarController)),
-            (.settings, settingsViewController)
-        ]
-        presentViewController(tabBarController)
-
-        historyViewModel.setupTabBarBadge(delegate: tabBarController)
-        (settingsViewController.viewControllers.first as? SettingsViewController)?.updateBadgeIfNeeded(badgeUpdaterDelegate: tabBarController)
+        let pageViewController = WalletPageViewController.instantiate(walletViewController: walletViewController(), nodeViewController: nodeViewController, historyViewController: historyViewController)
+        presentViewController(pageViewController)
+        
+        self.pageViewController = pageViewController
 
         if let route = self.route {
             handle(route)
@@ -180,35 +144,75 @@ final class WalletCoordinator: NSObject, Coordinator {
     func walletViewController() -> WalletViewController {
         let walletViewModel = WalletViewModel(lightningService: lightningService)
         let walletEmptyStateViewModel = WalletEmptyStateViewModel(lightningService: lightningService, fundButtonTapped: presentFundWallet)
-        return WalletViewController.instantiate(walletViewModel: walletViewModel, sendButtonTapped: presentSend, requestButtonTapped: presentRequest, nodeAliasButtonTapped: presentWalletList, emptyStateViewModel: walletEmptyStateViewModel)
+        return WalletViewController.instantiate(
+            walletViewModel: walletViewModel,
+            sendButtonTapped: presentSend,
+            requestButtonTapped: presentRequest,
+            historyButtonTapped: presentHistory,
+            nodeButtonTapped: presentNode,
+            channelButtonTapped: presentChannelList,
+            emptyStateViewModel: walletEmptyStateViewModel
+        )
     }
 
-    func settingsViewController() -> ZapNavigationController {
-        guard let disconnectWalletDelegate = disconnectWalletDelegate else { fatalError("Didn't set disconnectWalletDelegate") }
+    private func disconnectWallet() {
+        disconnectWalletDelegate?.disconnect()
+    }
+    
+    private func presentHistory() {
+        pageViewController?.presentHistory()
+    }
 
-        let settingsViewController = SettingsViewController(
-            info: lightningService.infoService.info.value,
-            connection: lightningService.connection,
-            disconnectWalletDelegate: disconnectWalletDelegate,
-            authenticationViewModel: authenticationViewModel,
-            pushNodeURIViewController: pushNodeURIViewController,
-            pushLndLogViewController: pushLndLogViewController,
-            pushChannelBackup: pushChannelBackup)
+    private func presentNode() {
+        pageViewController?.presentNode()
+    }
 
-        let navigationController = ZapNavigationController(rootViewController: settingsViewController)
+    private func presentWallet() {
+        pageViewController?.presentWallet()
+    }
+    
+    private func nodeViewController() -> ZapNavigationController {
+        let navigationController = ZapNavigationController()
 
-        navigationController.tabBarItem.title = Tab.settings.title
-        navigationController.tabBarItem.image = Tab.settings.image
-        navigationController.view.backgroundColor = UIColor.Zap.background
-
+        let nodeViewController = NodeViewController.instantiate(
+            lightningService: lightningService,
+            presentChannels: pushChannelList(on: navigationController),
+            presentSettings: pushSettings(on: navigationController),
+            presentWallet: presentWallet,
+            manageNodes: presentWalletList,
+            presentChannelBackup: presentChannelBackup(on: navigationController),
+            presentURIViewController: pushNodeURIViewController
+        )
+        
+        navigationController.viewControllers = [nodeViewController]
         return navigationController
     }
 
+    private func pushSettings(on navigationController: UINavigationController) -> (() -> Void) {
+        return { [weak self] in
+            guard let viewController = self?.settingsViewController() else { return }
+            navigationController.pushViewController(viewController, animated: true)
+        }
+    }
+
+    func settingsViewController() -> SettingsViewController {
+        return SettingsViewController(
+            info: lightningService.infoService.info.value,
+            connection: lightningService.connection,
+            authenticationViewModel: authenticationViewModel,
+            pushLndLogViewController: pushLndLogViewController
+        )
+    }
+
     func historyViewController() -> UINavigationController {
-        let viewController = HistoryViewController.instantiate(historyViewModel: historyViewModel, presentFilter: presentFilter, presentDetail: presentDetail, presentSend: presentSend)
+        let viewController = HistoryViewController.instantiate(
+            historyViewModel: historyViewModel,
+            presentFilter: presentFilter,
+            presentDetail: presentDetail,
+            presentSend: presentSend,
+            presentWallet: presentWallet
+        )
         let navigationController = ZapNavigationController(rootViewController: viewController)
-        navigationController.tabBarItem.title = Tab.history.title
-        navigationController.tabBarItem.image = Tab.history.image
 
         return navigationController
     }
@@ -240,8 +244,11 @@ final class WalletCoordinator: NSObject, Coordinator {
     }
 
     func presentSend(invoice: String?) {
-        let strategy = SendQRCodeScannerStrategy(lightningService: lightningService, authenticationViewModel: authenticationViewModel)
-
+        let strategy = CombinedQRCodeScannetStrategy(strategies: [
+            SendQRCodeScannerStrategy(lightningService: lightningService, authenticationViewModel: authenticationViewModel),
+            LNURLWithdrawQRCodeScannetStrategy(lightningService: lightningService)
+        ])
+        
         if let invoice = invoice {
             DispatchQueue(label: "presentSend").async {
                 let group = DispatchGroup()
@@ -255,32 +262,38 @@ final class WalletCoordinator: NSObject, Coordinator {
             }
         } else {
             let viewController = UINavigationController(rootViewController: QRCodeScannerViewController(strategy: strategy))
+            viewController.modalPresentationStyle = .fullScreen
             rootViewController.present(viewController, animated: true)
         }
     }
 
+    func presentLNURLWithdrawQRCodeScanner() {
+        let strategy = LNURLWithdrawQRCodeScannetStrategy(lightningService: lightningService)
+        let viewController = UINavigationController(rootViewController: QRCodeScannerViewController(strategy: strategy))
+        viewController.modalPresentationStyle = .fullScreen
+        rootViewController.present(viewController, animated: true)
+    }
+    
     func presentRequest() {
         let viewModel = RequestViewModel(lightningService: lightningService)
-        let viewController = RequestViewController(viewModel: viewModel)
+        let viewController = RequestViewController(viewModel: viewModel, presentQrCode: presentLNURLWithdrawQRCodeScanner)
         rootViewController.present(viewController, animated: true)
     }
 
     private func presentWalletList() {
-        guard
-            walletConfigurationStore.configurations.count >= 2,
-            let disconnectWalletDelegate = disconnectWalletDelegate
-            else { return }
+        guard let disconnectWalletDelegate = disconnectWalletDelegate else { return }
 
         UISelectionFeedbackGenerator().selectionChanged()
         let viewController = WalletListViewController.instantiate(walletConfigurationStore: walletConfigurationStore, disconnectWalletDelegate: disconnectWalletDelegate)
         let navigationController = ModalNavigationController(rootViewController: viewController, height: viewController.preferredHeight)
         rootViewController.present(navigationController, animated: true)
     }
-
+    
     private func presentAddChannel() {
         let strategy = OpenChannelQRCodeScannerStrategy(lightningService: lightningService)
         let viewController = UINavigationController(rootViewController: ChannelQRCodeScannerViewController(strategy: strategy, network: lightningService.infoService.network.value))
-        rootViewController.present(viewController, animated: true)
+        viewController.modalPresentationStyle = .fullScreen
+        channelListViewController?.present(viewController, animated: true)
     }
 
     private func presentSafariViewController(for url: URL) {
@@ -311,24 +324,38 @@ final class WalletCoordinator: NSObject, Coordinator {
         rootViewController.present(detailViewController, animated: true)
     }
 
-    private func channelNavigationController(badgeUpdaterDelegate: BadgeUpdaterDelegate) -> UINavigationController {
+    private func channelList() -> ChannelListViewController {
         let walletEmptyStateViewModel = WalletEmptyStateViewModel(lightningService: lightningService, fundButtonTapped: presentFundWallet)
         let channelListEmptyStateViewModel = ChannelListEmptyStateViewModel(openButtonTapped: presentAddChannel)
-        let viewController = ChannelListViewController.instantiate(channelListViewModel: channelListViewModel, addChannelButtonTapped: presentAddChannel, presentChannelDetail: presentChannelDetail, walletEmptyStateViewModel: walletEmptyStateViewModel, channelListEmptyStateViewModel: channelListEmptyStateViewModel)
-
-        viewController.badgeUpdaterDelegate = badgeUpdaterDelegate
-
-        let navigationController = ZapNavigationController(rootViewController: viewController)
-        navigationController.tabBarItem.title = Tab.channels.title
-        navigationController.tabBarItem.image = Tab.channels.image
-        navigationController.view.backgroundColor = UIColor.Zap.background
-        return navigationController
+        let viewController = ChannelListViewController.instantiate(
+            channelListViewModel: channelListViewModel,
+            addChannelButtonTapped: presentAddChannel,
+            presentChannelDetail: presentChannelDetail,
+            walletEmptyStateViewModel: walletEmptyStateViewModel,
+            channelListEmptyStateViewModel: channelListEmptyStateViewModel)
+        
+        channelListViewController = viewController
+        return viewController
+    }
+    
+    private func pushChannelList(on navigationController: UINavigationController) -> (() -> Void) {
+        return { [weak self] in
+            guard let self = self else { return }
+            navigationController.pushViewController(self.channelList(), animated: true)
+        }
+    }
+    
+    private func presentChannelList() {
+        let navigationController = ZapNavigationController(rootViewController: channelList())
+        rootViewController.present(navigationController, animated: true)
     }
 
-    private func pushChannelBackup(on navigationController: UINavigationController) {
-        guard let nodePubKey = walletConfigurationStore.selectedWallet?.nodePubKey else { return }
-        let viewController = ChannelBackupViewController.instantiate(nodePubKey: nodePubKey)
-        navigationController.pushViewController(viewController, animated: true)
+    private func presentChannelBackup(on navigationController: UINavigationController) -> (() -> Void) {
+        return { [weak self] in
+            guard let nodePubKey = self?.walletConfigurationStore.selectedWallet?.nodePubKey else { return }
+            let viewController = ChannelBackupViewController.instantiate(nodePubKey: nodePubKey)
+            navigationController.pushViewController(viewController, animated: true)
+        }
     }
 
     private func presentChannelDetail(on presentingViewController: UIViewController, channelViewModel: ChannelViewModel) {

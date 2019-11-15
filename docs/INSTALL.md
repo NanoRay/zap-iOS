@@ -2,10 +2,11 @@
 
 ### Preliminaries
 
-Xcode 10.1 or above is required to run the app.
+Xcode 11.1 or above is required to run the app.
 
 #### First Step
-Run `./setup.sh` to download the required frameworks.
+1. Run `git submodule update --init --recursive` to download git submodules.
+2. Run `carthage bootstrap --platform iOS` to download the required frameworks.
 
 #### Helpful Tools and Next Steps
 
@@ -57,16 +58,3 @@ pod update [PODNAME]
 ##### Fastlane
 
 For automating the development and release process (https://fastlane.tools)
-
-### Build Configurations
-
-We currently support two ways of connecting to `lnd`:
-
-1. Running `lnd` on your local device.
-2. Connecting to a remote `lnd` instance.
-
-On-device `lnd` is the default, and in order to support this, you'll need to build the
-`Lndmobile.framework` framework and place it into the `Frameworks` folder.
-
-If you'd prefer connecting to a remote `lnd` instance without building `Lndmobile.framework`,
-you can edit the `Zap` run scheme and switch the Build Configuration from `debug` to `debugRemote`.

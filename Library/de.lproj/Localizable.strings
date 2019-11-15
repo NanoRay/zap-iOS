@@ -15,6 +15,18 @@
 "error.wrong_uri_network" = "Du hast versucht den Link %@ zu öffnen, aber dein Knoten ist mit %@ verbunden.";
 "error.block_explorer.unsupported_network" = "%@ unterstützt kein %@.";
 
+"lnd_error.wallet_encrypted" = "Wallet is encrypted";
+"lnd_error.lnd_not_running" = "Lnd does not seem to be running properly.";
+"lnd_error.transaction_output_is_dust" = "Transaction output is dust.";
+"lnd_error.no_outputs" = "No outputs.";
+"lnd_error.rest_network_error" = "Check your internet connection.";
+"lnd_error.unable_to_find_node" = "Unable to find node.";
+"lnd_error.insufficient_funds_available" = "Insufficient funds available to construct transaction.";
+"lnd_error.unknown_error" = "Unknown Error 1";
+"lnd_error.api_transformation_error" = "Unknown Error 2";
+"lnd_error.invoice_already_paid" = "Invoice is already paid.";
+"lnd_error.no_path_to_destination" = "Unable to find a path to destination.";
+
 "rpc_connect_qrcode_error.btc_pay_expired" = "Sieht so aus als wäre der QR-Code abgelaufen.";
 "rpc_connect_qrcode_error.btc_pay_configuration_broken" = "BTCPay Konfigurationsdatei konnte nicht gelesen werden.";
 "rpc_connect_qrcode_error.cant_read_qrcode" = "Ungültiges Codeformat.";
@@ -54,7 +66,7 @@
 "expiry_time.thirty_days" = "30 Tage";
 "expiry_time.one_year" = "1 Jahr";
 
-"scene.history.title" = "Verlauf";
+"scene.history.title" = "Aktivität";
 "scene.history.empty_state_label" = "0 Transaktionen 🙁";
 
 "scene.settings.title" = "Einstellungen";
@@ -72,10 +84,9 @@
 "scene.settings.item.on_chain_request_address.p2sh" = "P2SH";
 "scene.settings.item.manage_channels" = "Kanäle verwalten";
 "scene.settings.item.channel_backup" = "Kanal Backup";
-"scene.settings.item.node_uri" = "Knoten-Adresse";
 "scene.settings.item.remove_remote_node" = "Verwalten von Wallets";
 
-"scene.settings.item.change_pin" = "Pin ändern";
+"scene.settings.item.change_pin" = "PIN ändern";
 "scene.settings.item.report_issue" = "Ein Problem melden";
 "scene.settings.item.help" = "Brauchst du Hilfe?";
 "scene.settings.item.privacy_policy" = "Datenschutz";
@@ -117,7 +128,7 @@
 "scene.open_channel.suggested_peers.title" = "Vorgeschlagene Peers";
 "scene.open_channel.paste_button.title" = "Peer-Adresse einfügen";
 
-"scene.pin.biometric.fallback.title" = "PIN eingeben";
+"scene.pin.biometric.fallback.title" = "PIN verwenden";
 "scene.pin.biometric.reason" = "Um auf die Sicherheitsdaten zu zugreifen";
 
 "scene.setup_pin.done_button" = "Fertig";
@@ -145,6 +156,7 @@
 "scene.send.address_headline" = "An:";
 "scene.send.memo_headline" = "Memo:";
 "scene.send.sending" = "Wird gesendet...";
+"scene.send.send_amount_too_small" = "Send amount is too small.";
 "scene.send.lightning.title" = "Sende Lightning-Zahlung";
 "scene.send.on_chain.title" = "Sende on-Chain";
 "scene.send.on_chain.fee" = "Gebühr:";
@@ -164,7 +176,7 @@
 "scene.send.paste_button.title" = "Adresse einfügen";
 
 "scene.connect_remote_node.title" = "Remote-Knoten verbinden";
-"scene.connect_remote_node.empty_state" = "Scanne den QR-Code, welcher von lndconnect, BTCPay Server generiert wurde, oder füge den Link ein vom laufenden 'lndconnect -j', um eine Verbindung zu deinem Knoten aufzubauen.";
+"scene.connect_remote_node.empty_state" = "Scanne den QR-Code, der von lndconnect, BTCPay Server generiert wurde, oder füge den Link ein, den du von der Ausführung von 'lndconnect -j' erhalten hast, um dich mit deinem Knoten zu verbinden.";
 "scene.connect_remote_node.url_label" = "Adresse";
 "scene.connect_remote_node.certificate_label" = "Anmeldeinformationen";
 "scene.connect_remote_node.connect_button" = "Verbinden";
@@ -252,8 +264,10 @@
 "scene.wallet.empty_state.title" = "Lade deine Wallet auf";
 "scene.wallet.empty_state.message" = "Deine Wallet ist leer! Starten jetzt und füge Geld hinzu.";
 "scene.wallet.empty_state.button_title" = "Geld einzahlen";
+"scene.wallet.open_channel.message" = "Du kannst noch keine Transaktion im Lightning Netzwerk vornehmen. Öffne zuerst einen Kanal.";
+"scene.wallet.open_channel.action" = "Zahlungskanal öffnen";
 
-"scene.time_lock.headline" = "Falscher PIN";
+"scene.time_lock.headline" = "Falsche PIN";
 "scene.time_lock.description" = "Deine Geldbörse ist gesperrt für:";
 
 "scene.modal_pin.headline" = "PIN eingeben";
@@ -307,6 +321,23 @@
 "scene.push_notification.message" = "Um deine Gelder sicher zu halten, muss Zap ab und zu synchronisieren. Möchtest du eine Benachrichtigung erhalten, wenn es Zeit ist?";
 "scene.push_notification.confirm_button_title" = "Notifikationen einschalten";
 "scene.push_notification.skip_button_title" = "Überspringen";
+
+"scene.my_node.title" = "Mein Knoten";
+"scene.my_node.channels.title" = "Kanäle";
+"scene.my_node.channels.subtitle" = "Verwalte deine Kapazität";
+"scene.my_node.channel_backup.title" = "Kanal Backup";
+"scene.my_node.channel_backup.subtitle" = "Notfalloptionen einrichten";
+"scene.my_node.settings.title" = "Einstellungen";
+"scene.my_node.settings.subtitle" = "Einstellungen bearbeiten";
+"scene.my_node.support.title" = "Support";
+"scene.my_node.support.subtitle" = "Erhalte Support und sende Feedback";
+
+"scene.lnurl_qrcode_scanner.withdraw.title" = "Withdraw";
+"scene.lnurl_qrcode_scanner.withdraw.button_title" = "Paste LNURL";
+
+"scene.lnurl.withdraw.title" = "Withdraw";
+"scene.lnurl.withdraw.description" = "Description";
+"scene.lnurl.withdraw.button_title" = "Withdraw";
 
 "notification.sync.title" = "Bitte synchronisieren";
 "notification.sync.day_12.body" = "Stelle sicher dein Wallet zu synchronisieren um geschützt zu sein";

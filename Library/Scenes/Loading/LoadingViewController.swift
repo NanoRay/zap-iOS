@@ -10,7 +10,6 @@ import SwiftLnd
 import UIKit
 
 final class LoadingViewController: UIViewController {
-    @IBOutlet private weak var tabBar: UITabBar!
     @IBOutlet private weak var buttonContainerView: UIView!
     @IBOutlet private weak var sendButtonBackground: UIView!
     @IBOutlet private weak var receiveButtonBackground: UIView!
@@ -26,23 +25,12 @@ final class LoadingViewController: UIViewController {
 
         view.backgroundColor = UIColor.Zap.background
 
-        tabBar.barTintColor = UIColor.Zap.seaBlue
-        tabBar.isTranslucent = false
-        tabBar.shadowImage = UIImage()
-        tabBar.backgroundImage = UIImage()
-
-        tabBar.items = [Tab.wallet, Tab.history, Tab.channels, Tab.settings].map {
-            UITabBarItem(title: $0.title, image: $0.image, selectedImage: $0.image)
-        }
-        tabBar.isUserInteractionEnabled = false
-        tabBar.unselectedItemTintColor = UIColor.Zap.invisibleGray
-
         sendButtonBackground.backgroundColor = UIColor.Zap.seaBlue
         receiveButtonBackground.backgroundColor = UIColor.Zap.seaBlue
 
         Style.Button.custom().apply(to: sendButton, requestButton)
 
-        buttonContainerView.layer.cornerRadius = 20
+        buttonContainerView.layer.cornerRadius = Constants.buttonCornerRadius
         buttonContainerView.clipsToBounds = true
         buttonContainerView.backgroundColor = UIColor.Zap.deepSeaBlue
 

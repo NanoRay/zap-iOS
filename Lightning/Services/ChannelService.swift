@@ -8,10 +8,11 @@
 import Bond
 import Foundation
 import Logger
+import ReactiveKit
 import SwiftBTC
 import SwiftLnd
 
-public final class ChannelService {
+public final class ChannelService: NSObject {
     private let api: LightningApi
     private let channelListUpdater: ChannelListUpdater
 
@@ -22,6 +23,8 @@ public final class ChannelService {
     public var pending: MutableObservableArray<PendingChannel> {
         return channelListUpdater.pending
     }
+    
+    public let all = MutableObservableArray<Channel>()
 
     public var maxLocalBalance: Satoshi {
         var maxLocalBalance: Satoshi = 0
@@ -46,6 +49,16 @@ public final class ChannelService {
         self.channelListUpdater = channelListUpdater
         self.staticChannelBackupper = staticChannelBackupper
 
+        super.init()
+        
+        combineLatest(channelListUpdater.open, channelListUpdater.pending) { open, pending -> [Channel] in
+            open.collection + pending.collection
+        }
+        .observeNext { [weak self] in
+            self?.all.replace(with: $0)
+        }
+        .dispose(in: reactive.bag)
+        
         api.exportAllChannelsBackup { [weak self] in
             self?.handleChannelBackup($0)
         }
@@ -66,7 +79,7 @@ public final class ChannelService {
             } else {
                 api.connect(pubKey: lightningNodeURI.pubKey, host: lightningNodeURI.host) { result in
                     if case .failure(let error) = result {
-                        completion(.failure(LndApiError.localizedError(error.localizedDescription)))
+                        completion(.failure(error))
                     } else {
                         self?.openConnectedChannel(pubKey: lightningNodeURI.pubKey, csvDelay: csvDelay, amount: amount, completion: completion)
                     }
