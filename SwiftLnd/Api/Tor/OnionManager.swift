@@ -126,8 +126,9 @@ public class OnionManager: NSObject {
         if (self.torController == nil) {
             self.torController = TorController(socketHost: "127.0.0.1", port: 39060)
         }
+        
   
-        reachability = Reachability()
+        reachability = try! Reachability()
         NotificationCenter.default.addObserver(self, selector: #selector(self.networkChange), name: NSNotification.Name.reachabilityChanged, object: nil)
         try? reachability?.startNotifier()
 

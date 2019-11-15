@@ -19,7 +19,7 @@ final class LNURLWithdrawQRCodeScannetStrategy: QRCodeScannerStrategy {
         self.lightningService = lightningService
     }
     
-    func viewControllerForAddress(address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
+    func viewControllerForAddress(address: String, extra: Any?, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
         let address = address
             .deletingPrefix("lightning:")
             .deletingPrefix("LIGHTNING:")

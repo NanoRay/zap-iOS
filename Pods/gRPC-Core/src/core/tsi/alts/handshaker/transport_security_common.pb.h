@@ -3,7 +3,11 @@
 
 #ifndef PB_GRPC_GCP_TRANSPORT_SECURITY_COMMON_PB_H_INCLUDED
 #define PB_GRPC_GCP_TRANSPORT_SECURITY_COMMON_PB_H_INCLUDED
-#include <nanopb/pb.h>
+#if COCOAPODS==1
+  #include <nanopb/pb.h>
+#else
+  #include "pb.h"
+#endif
 /* @@protoc_insertion_point(includes) */
 #if PB_PROTO_HEADER_VERSION != 30
 #error Regenerate this file with the current version of nanopb generator.

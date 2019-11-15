@@ -3,7 +3,11 @@
 
 #ifndef PB_GRPC_GCP_ALTSCONTEXT_PB_H_INCLUDED
 #define PB_GRPC_GCP_ALTSCONTEXT_PB_H_INCLUDED
-#include <nanopb/pb.h>
+#if COCOAPODS==1
+  #include <nanopb/pb.h>
+#else
+  #include "pb.h"
+#endif
 #include "src/core/tsi/alts/handshaker/transport_security_common.pb.h"
 /* @@protoc_insertion_point(includes) */
 #if PB_PROTO_HEADER_VERSION != 30

@@ -21,8 +21,16 @@
 
 #include <grpc/support/port_platform.h>
 
-#include <nanopb/pb_decode.h>
-#include <nanopb/pb_encode.h>
+#if COCOAPODS==1
+  #include <nanopb/pb_decode.h>
+#else
+  #include "pb_decode.h"
+#endif
+#if COCOAPODS==1
+  #include <nanopb/pb_encode.h>
+#else
+  #include "pb_encode.h"
+#endif
 
 #include <grpc/slice.h>
 #include <grpc/slice_buffer.h>
