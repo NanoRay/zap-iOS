@@ -22,14 +22,14 @@ final class CombinedQRCodeScannetStrategy: QRCodeScannerStrategy {
         self.strategies = strategies
     }
     
-    func viewControllerForAddress(address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
+    func viewControllerForAddress(address: String, extra: Any?, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
         firstViewController(strategies: strategies, address: address, completion: completion)
     }
     
     func firstViewController(strategies: [QRCodeScannerStrategy], address: String, completion: @escaping (Result<UIViewController, QRCodeScannerStrategyError>) -> Void) {
         var strategies = Array(strategies.reversed())
         if let strategy = strategies.popLast() {
-            strategy.viewControllerForAddress(address: address) { [weak self] result in
+            strategy.viewControllerForAddress(address: address, extra: nil) { [weak self] result in
                 switch result {
                 case .success:
                     completion(result)

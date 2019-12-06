@@ -18,6 +18,7 @@
 	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 	<key>keychain-access-groups</key>
 	<array>
+		<string>$(AppIdentifierPrefix)co.appia.zap</string>
 		<string>$(AppIdentifierPrefix)com.jackmallers.zap</string>
 	</array>
 </dict>
